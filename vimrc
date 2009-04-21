@@ -4,9 +4,9 @@
 " Last modified: 2009-2-10 10:25:39 [HERO-5C126C0F8C]
 
 " When started as "evim", evim.vim will already have done these settings.
-if v:progname =~? "evim"
-    finish
-endif
+""if v:progname =~? "evim"
+""    finish
+""endif
 
 " Use Vim settings, rather then Vi settings (much better!).
 " This must be first, because it changes other options as a side effect.
@@ -18,27 +18,27 @@ set nocompatible
 " My best gui face
 color desertEx
 " FIXED: can running on gentoo now
-if has("win32")
-    set guifont=NSimSun:h9:cGB2312
-else
-    set guifont=SimSun\ 9
-endif
+"if has("win32")
+"    set guifont=NSimSun:h9:cGB2312
+"else
+"    set guifont=SimSun\ 9
+"endif
 
-" FIXED: can running on gentoo now
-if has("win32")
-    language mes en
-    lang en
-else
-    language mes en_US
-    lang en_US
-endif
+"" FIXED: can running on gentoo now
+"if has("win32")
+"    language mes en
+"    lang en
+"else
+"    language mes en_US
+"    lang en_US
+"endif
 
 set langmenu=en_US.UTF-8
 
-if has("win32")
-    winsize 100 70
-    winpos  600 6
-endif
+""if has("win32")
+""    winsize 100 70
+""    winpos  600 6
+""endif
 
 set guioptions-=T
 set guioptions-=t
@@ -79,6 +79,7 @@ endif
 "set termencoding=utf-8
 "set fileencoding=utf-8
 "set fileencodings=utf-8,cp936,gb18030,big5,euc-jp,utf-bom,iso8859-1
+set helplang=cn
 
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 " }}}
@@ -88,10 +89,10 @@ endif
 " >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 " Personal setting for working with Windows NT/2000/XP (requires tee in path)
-if &shell =~? 'cmd'
-    "set shellxquote=\"
-    set shellpipe=2>&1\|\ tee
-endif
+""if &shell =~? 'cmd'
+""    "set shellxquote=\"
+""    set shellpipe=2>&1\|\ tee
+""endif
 
 " Quote shell if it contains space and is not quoted
 if &shell =~? '^[^"].* .*[^"]'
@@ -111,6 +112,10 @@ set whichwrap=h,l,~,b,s,<,>,[,]
 " allow backspacing over everything in insert mode
 set backspace=indent,eol,start
 
+set scrolloff=2          " to start scrolling when cursor is 2 lines from edge
+set updatecount=50      " to write swap file to disk after 50 keys
+set showmatch matchtime=3 " when bracket is insered jump the matching
+set errorformat=%m\ in\ %f\ on\ line\ %l
 set linespace=2         " 
 set smarttab            " 
 set history=400         " lines of Ex commands, search history ...
@@ -148,6 +153,25 @@ set noerrorbells        " do not make noise
 
 " Don't use Ex mode, use Q for formatting
 map Q gq
+nnoremap <Esc>P P'[v']=
+nnoremap <Esc>p p'[v']=
+"tired of changing text inside quotes?
+nmap X ci"
+"make vim more browse-like
+nmap <Space> <PageDown>
+"insert your email quickly
+imap ;EM cbkidlll097@gmail.com
+"make <Backspace> act as <Delete> in Visual mode
+vmap <BS> x
+
+" use mapping to rebuild tags file after editing
+nmap <silent> <F4>
+        \ :!ctags-exuberant -f %:p:h/tags
+        \ --langmap="php:+.inc"
+        \ --h ".php.inc" -R --totals=yes
+        \ --tag-realative=yes --PHP-kinds=+cf-v %:p:h<CR>
+set tags=./tags,tags
+"        autocmd FileType php set tags+=$VIM/php.tags
 
 " Switch syntax highlighting on, when the terminal has colors
 " Also switch on highlighting the last used search pattern.
@@ -163,15 +187,17 @@ let g:mapleader = ","
 " save file
 nmap <leader>w :w!<cr>
 nmap <leader>f :find<cr>
+nmap <leader>r :!python %<CR>
+nmap <leader>ra :!python %
 
 " Console window open in the current file's directory, by Tokigun
-if has("win32")
-    fu! s:Console()
-        let l:path = iconv(expand("%:p:h"), &enc, &tenc)
-        silent exe "! start /d \"" . l:path . "\""
-    endf
-    nmap <silent> <Leader>x :call <SID>Console()<CR>
-endif
+""if has("win32")
+""    fu! s:Console()
+""        let l:path = iconv(expand("%:p:h"), &enc, &tenc)
+""        silent exe "! start /d \"" . l:path . "\""
+""    endf
+""    nmap <silent> <Leader>x :call <SID>Console()<CR>
+""endif
 
 " floding key binding
 if version >= 600
@@ -236,15 +262,29 @@ endif " has("autocmd")
 let g:AutoComplPop_MappingDriven=1
 let g:AutoComplPop_BehaviorKeywordLength=4
 
+" Insert <Tab> or complete identifier
+" if the cursor is after a keyword character
+" function MyTabOrComplete()
+"     let col = col('.')-1
+"     if !col || getline('.')[col-1] !~ '\k'
+"          return "\<tab>"
+"     else
+"          return "\<C-N>"
+"     endif
+" endfunction
+" inoremap <Tab> <C-R>=MyTabOrComplete()<CR>
+
+
 " vimfiles/plugin/taglist.vim
 
 " FIXED: can running on gentoo now
-if has("win32")
-    let g:Tlist_Ctags_Cmd=$VIMRUNTIME . '/ctags.exe'
-else
-    let g:Tlist_Ctags_Cmd='/usr/bin/ctags'
-endif
+" if has("win32")
+"     let g:Tlist_Ctags_Cmd=$VIMRUNTIME . '/ctags.exe'
+" else
+"     let g:Tlist_Ctags_Cmd='/usr/bin/ctags'
+" endif
 
+let g:Tlist_Ctags_Cmd="/usr/bin/ctags-exuberant"
 let g:Tlist_Use_Right_Window=0
 let g:Tlist_Exit_OnlyWindow=1
 let g:Tlist_Sort_Type=1
@@ -253,6 +293,7 @@ let g:Tlist_WinWidth=40
 let g:Tlist_Show_One_File=1
 let g:Tlist_Process_File_Always=1
 let g:Tlist_File_Fold_Auto_Close=1
+let tlist_php_settings='php;c:class;d:constant;f:function'
 
 " visible mode use ,t to open Tlist
 nmap <leader>t :TlistToggle<CR>
@@ -285,6 +326,8 @@ if has("autocmd")
     " make set with pyunit
     autocmd BufRead *.py setlocal makeprg=python\ -c\ \"import\ py_compile,sys;\ sys.stderr=sys.stdout;\ py_compile.compile(r'%')\"
     autocmd BufRead *.py setlocal efm=%C\ %.%#,%A\ \ File\ \"%f\"\\,\ line\ %l%.%#,%Z%[%^\ ]%\\@=%m
+    " make set with php
+    autocmd BufRead *.php setlocal makeprg=php\ -1\ %
 
     " FIXED: can running on gentoo now
     if has("win32")
@@ -335,3 +378,25 @@ nmap <leader>c :cclose<CR>
 " <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 " }}}
 
+"for the miniBufExpl
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplModSelTarget = 1 
+
+" for the php
+let php_sql_query=1     " to highlight SQL syntax
+let php_htmlInStrings=1 " to hg HTML in string
+let php_noShortTags=1   " to disable short tags
+let php_folding=1       " to enable folding for class and functions
+
+" make the php type point to the html
+au BufRead,BufNewFile *.php		set filetype=html
+"
+" the php indent
+"let PHP_autoformatcomment = 0 
+"let PHP_removeCRwhenUnix = 1
+"let PHP_BracesAtCodeLevel = 1
+"
+"autoload .vimrc
+autocmd! bufwritepost .vimrc source %
